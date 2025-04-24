@@ -464,6 +464,8 @@ const (
 	lcIncludeRepos       = lifecyclePrefix + IncludeRepos
 	lcExcludeRepos       = lifecyclePrefix + ExcludeRepos
 	PromotionType        = "promotion-type"
+	lcTag                = lifecyclePrefix + "tag"
+	lcProperties         = lifecyclePrefix + Properties
 )
 
 var commandFlags = map[string][]string{
@@ -512,6 +514,9 @@ var commandFlags = map[string][]string{
 	},
 	cmddefs.ReleaseBundleImport: {
 		user, password, accessToken, serverId, platformUrl,
+	},
+	cmddefs.ReleaseBundleAnnotate: {
+		platformUrl, user, password, accessToken, serverId, lcProject, lcTag, lcProperties,
 	},
 	AddConfig: {
 		interactive, EncPassword, configPlatformUrl, configRtUrl, configDistUrl, configXrUrl, configMcUrl, configPlUrl, configUser, configPassword, configAccessToken, sshKeyPath, sshPassphrase, ClientCertPath,
@@ -1047,6 +1052,8 @@ var flagsMap = map[string]components.Flag{
 	lcExcludeRepos: components.NewStringFlag(ExcludeRepos, "List of semicolon-separated(;) repositories to exclude from the promotion.` `", components.SetMandatoryFalse()),
 	platformUrl:    components.NewStringFlag(url, "JFrog platform URL. (example: https://acme.jfrog.io)` `", components.SetMandatoryFalse()),
 	PromotionType:  components.NewStringFlag(PromotionType, "The promotion type. Can be one of 'copy' or 'move'.", components.WithStrDefaultValue("copy")),
+	lcTag:          components.NewStringFlag(tag, "Tag to put on Release Bundle version.", components.SetMandatoryFalse()),
+	lcProperties:   components.NewStringFlag(Properties, "Properties to put on the of Manifest Release Bundle version.", components.SetMandatoryFalse()),
 }
 
 func GetCommandFlags(cmdKey string) []components.Flag {

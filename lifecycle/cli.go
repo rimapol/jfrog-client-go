@@ -7,6 +7,7 @@ import (
 	"github.com/jfrog/jfrog-cli-artifactory/cliutils/distribution"
 	"github.com/jfrog/jfrog-cli-artifactory/cliutils/flagkit"
 	lifecycle "github.com/jfrog/jfrog-cli-artifactory/lifecycle/commands"
+	rbAnnotate "github.com/jfrog/jfrog-cli-artifactory/lifecycle/docs/annotate"
 	rbCreate "github.com/jfrog/jfrog-cli-artifactory/lifecycle/docs/create"
 	rbDeleteLocal "github.com/jfrog/jfrog-cli-artifactory/lifecycle/docs/deletelocal"
 	rbDeleteRemote "github.com/jfrog/jfrog-cli-artifactory/lifecycle/docs/deleteremote"
@@ -101,6 +102,15 @@ func GetCommands() []components.Command {
 			Arguments:   rbImport.GetArguments(),
 			Category:    lcCategory,
 			Action:      releaseBundleImport,
+		},
+		{
+			Name:        "release-bundle-annotate",
+			Aliases:     []string{"rba"},
+			Flags:       flagkit.GetCommandFlags(cmddefs.ReleaseBundleAnnotate),
+			Description: rbAnnotate.GetDescription(),
+			Arguments:   rbAnnotate.GetArguments(),
+			Category:    lcCategory,
+			Action:      annotate,
 		},
 	}
 }
@@ -377,6 +387,37 @@ func releaseBundleImport(c *components.Context) error {
 		SetFilepath(c.GetArgumentAt(0))
 
 	return commands.Exec(importCmd)
+}
+
+func annotate(c *components.Context) error {
+	if show, err := pluginsCommon.ShowCmdHelpIfNeeded(c, c.Arguments); show || err != nil {
+		return err
+	}
+
+	if len(c.Arguments) < 2 {
+		return pluginsCommon.WrongNumberOfArgumentsHandler(c)
+	}
+
+	rtDetails, err := createLifecycleDetailsByFlags(c)
+	if err != nil {
+		return err
+	}
+	annotateCmd := lifecycle.NewReleaseBundleAnnotateCommand()
+
+	project := c.GetStringFlagValue("project")
+	if project == "" {
+		project = "default"
+	}
+
+	annotateCmd.
+		SetServerDetails(rtDetails).
+		SetReleaseBundleProject(project).
+		SetReleaseBundleName(c.GetArgumentAt(0)).
+		SetReleaseBundleVersion(c.GetArgumentAt(1)).
+		SetTag(c.GetStringFlagValue("tag")).
+		SetProps(c.GetStringFlagValue("properties"))
+
+	return commands.Exec(annotateCmd)
 }
 
 func validateDistributeCommand(c *components.Context) error {
