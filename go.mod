@@ -123,4 +123,5 @@ require (
 
 //replace github.com/jfrog/jfrog-client-go => ../jfrog-client-go
 replace github.com/jfrog/jfrog-client-go => github.com/rimapol/jfrog-client-go v0.0.0-20250425065811-e7daba92326c
+
 //replace github.com/jfrog/jfrog-client-go => github.com/jfrog/jfrog-client-go v1.28.1-0.20240811142930-ab9715567376
